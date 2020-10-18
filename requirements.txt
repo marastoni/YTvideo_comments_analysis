@@ -3,4 +3,4 @@ pandas
 plotly
 keras
 google-api-python-client
-tensorflow
+tensorflow-cpu
