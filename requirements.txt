@@ -4,3 +4,4 @@ plotly
 keras
 google-api-python-client
 tensorflow-cpu
+textblob
