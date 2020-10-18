@@ -4,7 +4,7 @@ from keras.preprocessing import text
 from keras.preprocessing import sequence
 import pandas as pd
 import numpy as np
-
+from os import environ as env
 from textblob import TextBlob
 
 
@@ -79,11 +79,12 @@ def clean_text(commentList):
     
 def main(url):
     videoID = url.split('=')[1]
-    with open(r'.\secret\private_api_key.txt') as f:
-        lines = f.readlines()
-    for line in lines:
-        if 'api' in line:
-            api_key = line.split(':')[1]
+    # with open(r'.\secret\private_api_key.txt') as f:
+    #     lines = f.readlines()
+    # for line in lines:
+    #     if 'api' in line:
+    #         api_key = line.split(':')[1]
+    api_key = env.get('GOOGLE_API_KEY')
     youtube = build('youtube', 'v3', developerKey=api_key)
     usefull = []
     misc =[]
