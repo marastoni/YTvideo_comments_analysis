@@ -1,8 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import src.main 
-import random
+from src.main import *
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import base64
@@ -53,7 +52,7 @@ def download_link_json(object_to_download, download_filename, download_link_text
 
 
 if btn_load_data:
-    df = main.main(url)
+    df = main(url)
     st.markdown('%i total comments ' % len(df))
     st.write(df)
     tmp_download_link_csv = download_link_csv(df, 'YOUR_DF.csv', 'Click here to download your data as CSV!')
