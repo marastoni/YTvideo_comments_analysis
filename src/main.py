@@ -6,6 +6,8 @@ import pandas as pd
 import numpy as np
 from os import environ as env
 from textblob import TextBlob
+from potara.summarizer import Summarizer
+from potara.document import Document
 
 
 def Parse(response):
@@ -75,7 +77,12 @@ def clean_text(commentList):
             commentList[i] = commentList[i].replace(';','')
     return commentList
     
-    
+def Summarization(df):
+    commentList = df['comments'].to_list()
+    corpus = ''.join(commentList)
+    s = Summarizer()
+    s.setDocuments([Document(commentList[i])
+                for i in range(len(commentList))])   
     
 def main(url):
     videoID = url.split('=')[1]
