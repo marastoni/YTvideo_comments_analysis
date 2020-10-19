@@ -102,7 +102,7 @@ def main(url):
             request = youtube.commentThreads().list_next(request,response)
             response = request.execute()
             commentList = Parse(response)
-            df.append(PredSample(commentList))
+            df = df.append(PredSample(commentList))
         except:
             break
     
