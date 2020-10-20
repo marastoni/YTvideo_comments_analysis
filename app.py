@@ -6,6 +6,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import base64
 import csv
+import time
 
 #set GIT_PYTHON_REFRESH=quiet
 
@@ -53,6 +54,7 @@ def download_link_json(object_to_download, download_filename, download_link_text
 
 if btn_load_data:
     df = main(url)
+    df = Clustering(df)
     st.markdown('%i total comments ' % len(df))
     st.write(df)
     tmp_download_link_csv = download_link_csv(df, 'YOUR_DF.csv', 'Click here to download your data as CSV!')
@@ -93,8 +95,27 @@ if btn_load_data:
                         annotations=[dict(text='utility', x=0.18, y=0.5, font_size=16, showarrow=False),
                                     dict(text='sentiment', x=0.86, y=0.5, font_size=16, showarrow=False)])          
             st.plotly_chart(fig)
+            
+    
+    st.sidebar.subheader('Summaries:')
+    if not st.sidebar.checkbox('Hide ',True):
+        st.subheader('Summaries:')
+        n_topic = max(df['group'])+1
+        j = 0
+        for i in range(n_topic):
+            try:
+                grp = df.groupby('group')['comments']
+                mini_df = grp.get_group(i)
+                summary = Summarization(mini_df)
+                if summary == '':
+                    continue
+                j = j + 1
+                st.markdown('Topic_'+str(j))
+                st.success(summary)
+                time.sleep(0.5)
 
-
+            except:
+                continue
 
 
 

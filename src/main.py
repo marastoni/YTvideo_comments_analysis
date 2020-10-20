@@ -6,8 +6,13 @@ import pandas as pd
 import numpy as np
 from os import environ as env
 from textblob import TextBlob
-from potara.summarizer import Summarizer
-from potara.document import Document
+from gensim.summarization.summarizer import summarize,summarize_corpus
+from nltk.stem import PorterStemmer
+from nltk.corpus import stopwords
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn import cluster
+from sklearn.metrics import silhouette_score
+
 
 
 def Parse(response):
@@ -78,11 +83,43 @@ def clean_text(commentList):
     return commentList
     
 def Summarization(df):
+    commentList = df.to_list()
+    corpus = '\n'.join(commentList)
+    summary = summarize(corpus)
+    return summary
+   
+def tokenizer(keyword):
+    stemmer = PorterStemmer()
+    # with open(,'r') as f:
+    # stopwords = 
+    return [stemmer.stem(w) for w in keyword.split(' ')]
+
+       
+def Clustering(df):
     commentList = df['comments'].to_list()
-    corpus = ''.join(commentList)
-    s = Summarizer()
-    s.setDocuments([Document(commentList[i])
-                for i in range(len(commentList))])   
+    tfidf = TfidfVectorizer(tokenizer=tokenizer)
+    X = pd.DataFrame(tfidf.fit_transform(commentList).toarray(),
+                     index=commentList,columns=tfidf.get_feature_names())
+    opt_number = Auto_number_cluster(X)
+    c = cluster.KMeans(n_clusters=opt_number, init='k-means++', max_iter=100, n_init=1)
+    clu = c.fit_predict(X)
+    df['group'] = pd.Series(clu)
+
+    return df
+
+
+def Auto_number_cluster(X):
+    sil = []
+    kmax = 8
+    # dissimilarity would not be defined for a single cluster, thus, minimum number of clusters should be 2
+    for k in range(2, kmax+1):
+      kmeans = cluster.KMeans(n_clusters = k).fit(X)
+      labels = kmeans.labels_
+      sil.append(silhouette_score(X, labels, metric = 'euclidean'))
+    
+    opt_cluster_nummber = sil.index(max(sil))+2
+    
+    return opt_cluster_nummber
     
 def main(url):
     videoID = url.split('=')[1]
@@ -118,6 +155,12 @@ def main(url):
 
 if __name__ == '__main__':
     url= 'https://www.youtube.com/watch?v=wXGa0bDvFWA'
-    main(url)
-
+    df = main(url)
+    df = Clustering(df)
+    n_topic = max(df['group'])+1
+    for i in range(n_topic):
+        grp = df.groupby('group')['comments']
+        mini_df = grp.get_group(i)
+        summary = Summarization(mini_df)
+        print(summary)
 
