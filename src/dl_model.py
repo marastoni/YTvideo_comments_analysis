@@ -12,6 +12,7 @@ import sklearn.datasets as skd
 from sklearn.feature_extraction.text import TfidfVectorizer,CountVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn import svm
+from cleantext import clean
 
 #keras
 from keras.preprocessing import sequence
@@ -32,6 +33,33 @@ import matplotlib.pyplot as plt
 # creating a dataset with colums: ['comments','target']
 # target = 0 means 'others' target label
 # target = 1 means 'concerns' targte label
+
+def clean_text(df):
+    commentList = df.to_list()
+    for i in range(len(commentList)):
+        commentList[i] = clean(commentList[i],
+                fix_unicode=True,               # fix various unicode errors
+                to_ascii=True,                  # transliterate to closest ASCII representation
+                lower=True,                     # lowercase text
+                no_line_breaks=True,           # fully strip line breaks as opposed to only normalizing them
+                no_urls=True,                  # replace all URLs with a special token
+                no_emails=True,                # replace all email addresses with a special token
+                no_phone_numbers=True,         # replace all phone numbers with a special token
+                no_numbers=True,               # replace all numbers with a special token
+                no_digits=True,                # replace all digits with a special token
+                no_currency_symbols=True,      # replace all currency symbols with a special token
+                no_punct=True,                 # remove punctuations
+                replace_with_punct="",          # instead of removing punctuations you may replace them
+                replace_with_url="<URL>",
+                replace_with_email="<EMAIL>",
+                replace_with_phone_number="<PHONE>",
+                replace_with_number="<NUMBER>",
+                replace_with_digit="0",
+                replace_with_currency_symbol="<CUR>",
+                lang="en"                       # set to 'de' for German special handling
+                )
+    return commentList
+
 
 content_concerns = []
 content_others = []
@@ -63,6 +91,9 @@ df = df.sample(frac=1).reset_index(drop=True)
 
 df_x = df['comments'] 
 df_y = df['labels']
+
+#clean_text
+df_x = clean_text(df_x)
 
 #split train test
 x_train, x_test, y_train, y_test = train_test_split(df_x,df_y,test_size=0.2,random_state=4)
@@ -137,6 +168,7 @@ model.save('model.h5')
 
 # model.save('my_model.h5')
 # model_load = load_model('my_model.h5')
+
 
 
 
