@@ -36,6 +36,10 @@ import matplotlib.pyplot as plt
 
 def clean_text(df):
     commentList = df.to_list()
+    # if '"' in commentList[i]:
+    #     commentList[i] = commentList[i].replace('"','')
+    # if ';' in commentList[i]:
+    #     commentList[i] = commentList[i].replace(';','')
     for i in range(len(commentList)):
         commentList[i] = clean(commentList[i],
                 fix_unicode=True,               # fix various unicode errors
@@ -93,7 +97,7 @@ df_x = df['comments']
 df_y = df['labels']
 
 #clean_text
-df_x = clean_text(df_x)
+# df_x = clean_text(df_x)
 
 #split train test
 x_train, x_test, y_train, y_test = train_test_split(df_x,df_y,test_size=0.2,random_state=4)
