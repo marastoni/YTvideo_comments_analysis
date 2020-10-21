@@ -7,3 +7,4 @@ tensorflow-cpu
 textblob
 gensim
 scikit-learn
+clean-text
