@@ -106,7 +106,7 @@ def clean_text(commentList):
 def Summarization(df):
     commentList = df.to_list()
     corpus = '\n'.join(commentList)
-    summary = summarize(corpus,ratio=0.2)
+    summary = summarize(corpus)
     return summary
    
 def tokenizer(keyword):
